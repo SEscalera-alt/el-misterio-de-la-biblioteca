@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>El Misterio de la Biblioteca Encantada — Misión STAAR</title>
+<style>
+:root{--ink:#f4f0e7;--green:#263b2d;--green2:#405844;--gold:#d7ad52;--cream:#211f1c;--red:#b94a48;--purple:#5d4b72;--mist:#d8ded5}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,#27372c,#101411 65%);color:var(--ink)}
+button,input{font:inherit}button{cursor:pointer}.app{max-width:1050px;margin:auto;padding:18px}
+.panel{background:rgba(30,31,28,.96);border:2px solid #5b624f;border-radius:22px;padding:24px;margin:16px 0;box-shadow:0 10px 28px rgba(0,0,0,.4)}
+h1{font-size:clamp(32px,5vw,52px);margin:8px 0;color:#f7e9bf}h2{font-size:28px;color:#f4df9e}p,li{line-height:1.55}
+.badge{display:inline-block;padding:7px 12px;border-radius:99px;background:#3a4938;color:#f5e9bd;font-weight:800;font-size:13px}
+.start-story,.passage{background:linear-gradient(135deg,#24231f,#302d27);border-left:7px solid var(--gold);border-radius:14px;padding:20px;line-height:1.75;font-size:18px;box-shadow:inset 0 0 30px rgba(0,0,0,.18)}
+.passage p{margin:0 0 13px}.passage p:last-child{margin-bottom:0}
+.name{width:100%;padding:14px;border:2px solid #858b7d;border-radius:10px;background:#f4f0e7;color:#111}
+.primary{background:#586f4e;color:#fff;border:0;border-radius:12px;padding:14px 20px;font-weight:800;box-shadow:0 3px 0 #263b2d}.primary:active{transform:translateY(2px);box-shadow:none}
+.top{display:grid;grid-template-columns:1fr auto;gap:15px;align-items:center}.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.stat{background:#292c27;border:1px solid #626b59;border-radius:12px;padding:9px 12px;font-weight:800;color:#f4f0e7}
+.progress{height:13px;background:#42483e;border-radius:99px;overflow:hidden;margin-top:15px}.bar{height:100%;width:0;background:var(--gold);transition:.3s}
+.timer{font-size:25px;font-weight:900;background:#302b20;border:2px solid var(--gold);border-radius:13px;padding:10px 14px;color:#f7e9bf}
+.map{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin-top:15px}.room{min-height:105px;text-align:left;background:#262b25;border:2px solid #56604e;border-radius:15px;padding:11px;color:#f4f0e7;box-shadow:none}.room .icon{font-size:28px}.room b{display:block;margin-top:4px;font-size:13px}.room small{display:block;margin-top:3px}.room.locked{opacity:.42;cursor:not-allowed}.room.done{background:#344735;border-color:#758d68}.room.current{outline:4px solid var(--gold);background:#3a3527}
+.challenge{display:none}.challenge.active{display:block;animation:pop .25s ease}@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.questionTag{font-size:13px;font-weight:800;color:#d9b968;text-transform:uppercase}.choices{display:grid;gap:10px}.choice{width:100%;text-align:left;padding:15px;border:2px solid #596354;border-radius:13px;background:#262b25;color:#f4f0e7;box-shadow:none}.choice:hover{background:#333b30}.choice:focus{outline:4px solid #d7ad52;outline-offset:2px}.choice.correct{background:#304a34;border-color:#7fa178}.choice.wrong{background:#512b2b;border-color:#b94a48}
+.feedback{min-height:35px;font-weight:800;color:#f4f0e7;margin-top:12px}.hint{background:#403822;border:2px solid var(--gold);border-radius:13px;padding:14px;margin-top:10px;color:#f7e9bf;font-weight:700}.hintBtn{background:#eee9dd;color:#111;border:2px solid #777;border-radius:11px;padding:10px 14px;font-weight:800;margin-top:8px}
+.lock{background:#29362b;border:2px solid #758d68;border-radius:14px;padding:17px;margin-top:18px}.code{width:100px;text-align:center;padding:11px;border:2px solid #777;border-radius:9px;color:#111}
+.overlay{position:fixed;inset:0;background:rgba(3,6,4,.86);display:flex;align-items:center;justify-content:center;padding:18px;z-index:20}.overlay.hidden{display:none}.gamebox{background:#211f1c;border:5px solid #d7ad52;border-radius:22px;max-width:650px;width:100%;padding:22px;text-align:center;color:#f4f0e7}.gamebox h2{margin-top:0}.miniHud{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:800}.miniGame{position:relative;height:270px;border:4px solid #596a54;border-radius:16px;background:linear-gradient(#171d1b 0 70%,#2f402c 70%);overflow:hidden;margin:14px 0}.player{position:absolute;left:45%;bottom:25px;font-size:42px;transition:left .08s}.star{position:absolute;font-size:30px;transition:transform .12s}.controls{display:flex;justify-content:center;gap:8px}.controls button{width:60px;height:50px;border-radius:12px;border:2px solid #777;background:#f5f2e8;color:#111;font-size:22px}.miniMessage{font-weight:800;min-height:26px}.vault{background:#151515;color:#fff;border:7px solid #777;border-radius:20px;padding:25px;text-align:center}.vault input{width:260px;max-width:100%;font-size:28px;letter-spacing:9px;text-align:center;padding:12px;border-radius:10px;border:3px solid #aaa}.final{text-align:center;background:linear-gradient(135deg,#243327,#3d3624);border-color:#8a9b7d}.final h1{font-size:50px}.trophy{font-size:70px}.hidden{display:none!important}.teacher{font-size:13px}
+@media(max-width:850px){.map{grid-template-columns:repeat(3,1fr)}}@media(max-width:600px){.map{grid-template-columns:repeat(2,1fr)}.top{grid-template-columns:1fr}.panel{padding:18px}.passage,.start-story{font-size:17px}}
+</style>
+</head>
+<body>
+<main class="app" id="app">
+<section class="panel" id="startScreen">
+<span class="badge">5.º GRADO • LECTURA EN ESPAÑOL • MISIÓN TIPO STAAR • EDICIÓN DE MIEDO</span>
+<h1>👻 El Misterio de la Biblioteca Encantada</h1>
+<p><b>Tu misión:</b> entra en una biblioteca que parece haber despertado durante una tormenta. Lee leyendas y relatos espeluznantes, encuentra evidencia y resuelve el misterio. Tendrás <b>solo dos intentos</b> por pregunta.</p>
+<div class="start-story"><b>LA ADVERTENCIA:</b> A medianoche, una campana que nadie había tocado sonó dentro de la biblioteca. En la mesa apareció una nota: <i>“Seis historias guardan seis pistas. Lee con cuidado. Los fantasmas pueden asustar, pero las palabras siempre dejan evidencia.”</i></div>
+<p>🕯️ <b>Después de cada respuesta correcta desbloquearás un mini-juego:</b> ¡Caza de Faroles! Atrapa tres luces antes de que desaparezcan.</p>
+<label for="studentName"><b>Nombre del detective</b></label>
+<input id="studentName" class="name" placeholder="Escribe tu nombre">
+<br><br><button type="button" class="primary" id="startBtn">🕯️ ENTRAR A LA BIBLIOTECA</button>
+<p><small>Tiempo aproximado: 35–40 minutos • 12 preguntas • 2 intentos por pregunta • Todas las lecturas son ficción o adaptaciones de tradición oral.</small></p>
+</section>
+
+<section id="game" class="hidden">
+<section class="panel">
+<div class="top"><div><b id="studentLabel">🕵️ Detective</b><div id="rank">Aprendiz de lo Sobrenatural</div></div><div class="timer" id="timer" aria-live="polite">40:00</div></div>
+<div class="stats"><div class="stat">🕯️ XP: <span id="xp">0</span></div><div class="stat">🏅 Insignias: <span id="badges">0</span>/12</div><div class="stat">💡 Pistas: <span id="hintsUsed">0</span></div><div class="stat">🎯 Preguntas: <span id="answered">0</span>/12</div></div>
+<div style="margin-top:12px">Progreso <span id="progressText">0/12</span></div><div class="progress"><div class="bar" id="progressBar"></div></div>
+<div class="map" id="map"></div>
+</section>
+<section class="panel"><p id="roomStatus"><b>Sección 1.</b></p><div id="challengeContainer"></div></section>
+
+<section class="panel hidden" id="vaultPanel"><span class="badge">🔒 FINAL</span><h2>La caja fuerte de las leyendas</h2><p>Reúne las 12 cifras de las preguntas y escribe el código en orden.</p><div class="vault"><div style="font-size:55px">🔐</div><input id="vaultCode" maxlength="12" inputmode="numeric" placeholder="••••••••••••" aria-label="Código final"><br><button type="button" class="primary" id="vaultBtn">ABRIR CAJA</button><p id="vaultFeedback"></p></div></section>
+
+<section class="panel final hidden" id="finalPanel"><div class="trophy">🏆👻🕯️</div><h1>¡ESCAPASTE!</h1><h2 id="finalRank">Maestro de las Leyendas</h2><p id="finalText"></p><div class="start-story"><b>Mensaje final:</b> Un lector experto no se deja llevar por el susto. Busca evidencia, analiza las palabras del autor y explica por qué una respuesta tiene sentido.</div><button type="button" class="primary" id="restartBtn">🔄 VOLVER A JUGAR</button></section>
+</section>
+
+<div class="overlay hidden" id="gameOverlay" role="dialog" aria-modal="true">
+<div class="gamebox"><h2>🕯️ ¡CAZA DE FAROLES!</h2><p>¡Ganaste la pregunta! Tienes <b>10 segundos</b> para atrapar 3 faroles.</p><div class="miniHud"><span>🕯️ Faroles: <span id="stars">0</span>/3</span><span>⏱️ <span id="miniTime">10</span>s</span></div><div class="miniGame" id="miniGame"><div class="player" id="player">🕵️</div></div><div class="controls"><button type="button" id="leftBtn" aria-label="Mover izquierda">⬅️</button><button type="button" id="rightBtn" aria-label="Mover derecha">➡️</button></div><p class="miniMessage" id="miniMessage">¡Muévete y atrapa los faroles!</p></div>
+</div>
+<script>
+(function(){
+"use strict";
+const sections=[
+{title:"La Luz Mala",icon:"🔵",source:"Leyenda tradicional adaptada",passage:[
+"En algunas regiones de Sudamérica existe una leyenda sobre una luz extraña que aparece de noche en lugares solitarios. Algunas personas la llaman la Luz Mala. Según la tradición, la luz puede verse flotando sobre el campo y desaparece cuando alguien intenta acercarse.",
+"Una tarde, Sofía caminaba de regreso a casa cuando vio un resplandor azul entre los pastos. Su abuelo le había advertido que no siguiera luces desconocidas durante la noche. Sofía se detuvo y observó desde el camino. El resplandor se movió lentamente, aunque no parecía venir de ninguna lámpara.",
+"Sofía esperó detrás de un árbol hasta que la luz desapareció. Al día siguiente regresó al mismo lugar con su abuelo, pero no encontraron ninguna señal. Sofía nunca supo si había visto la famosa Luz Mala o si alguna fuente natural había creado aquel resplandor."
+],questions:[
+{tag:"Inferencia",q:"¿Qué puede inferir el lector sobre Sofía al final de la leyenda?",opts:["Sigue sin tener una explicación segura de lo que vio.","Está completamente segura de que vio un espíritu.","Decide que nunca volverá a hablar con su abuelo.","Descubre quién creó la leyenda."],ans:0,hint:"Fíjate en la última oración: Sofía nunca supo si…",why:"La narración termina diciendo que Sofía no sabe si vio la Luz Mala o si una fuente natural produjo el resplandor. Por eso, no tiene una explicación segura."},
+{tag:"Propósito de una sección",q:"¿Cuál es el propósito del segundo párrafo?",opts:["Explicar cómo llegó Sofía al pueblo.","Presentar el encuentro de Sofía con la luz y mostrar por qué la situación resulta misteriosa.","Demostrar que la leyenda es verdadera.","Describir la casa de Sofía."],ans:1,hint:"Piensa qué información hace que el lector empiece a preguntarse qué es la luz.",why:"El segundo párrafo presenta el encuentro de Sofía con el resplandor y muestra detalles que aumentan el misterio sin revelar su origen."}
+]},{title:"El Cadejo",icon:"🐺",source:"Leyenda tradicional adaptada",passage:[
+"Según una antigua leyenda centroamericana, algunas personas dicen que un gran perro misterioso aparece en los caminos por la noche. En algunas versiones, un cadejo blanco protege a los viajeros, mientras que un cadejo oscuro representa peligro.",
+"Tomás regresaba a casa por un camino de tierra cuando escuchó pasos detrás de él. Al mirar, vio un perro enorme de pelaje oscuro. El animal no ladró; solo caminó a unos metros de distancia.",
+"Tomás aceleró el paso. El perro siguió allí hasta que aparecieron las primeras luces de las casas. Entonces se detuvo y desapareció entre los árboles. Tomás nunca supo si el animal quería asustarlo o simplemente había caminado con él hasta que estuviera a salvo."
+],questions:[
+{tag:"Idea clave",q:"¿Cuál es la idea clave del relato sobre el Cadejo?",opts:["Tomás compra un perro después de regresar a casa.","Una figura misteriosa acompaña a Tomás durante su camino y su intención queda sin resolver.","Tomás aprende a caminar más rápido por los caminos de tierra.","Los habitantes del pueblo descubren dónde vive el Cadejo."],ans:1,hint:"Resume lo más importante sin incluir detalles secundarios.",why:"Lo esencial es que una figura misteriosa acompaña a Tomás y que él no descubre si era una amenaza o una protección."},
+{tag:"Propósito de una frase",q:"¿Cuál es el propósito de la frase “El animal no ladró; solo caminó a unos metros de distancia”?",opts:["Mostrar que el comportamiento del animal aumenta el misterio.","Explicar por qué Tomás conoce al animal.","Demostrar que el perro estaba entrenado.","Indicar que Tomás estaba perdido."],ans:0,hint:"Pregúntate cómo esa frase afecta la sensación que produce la escena.",why:"El animal no actúa como un perro común. Su silencio y distancia hacen que el lector se pregunte qué intención tiene."}
+]},
+{title:"El Silbón",icon:"🎵",source:"Leyenda tradicional adaptada",passage:[
+"Una leyenda venezolana cuenta que, en noches oscuras, algunas personas creen escuchar un silbido extraño en los llanos. Se dice que el sonido pertenece a un espíritu conocido como El Silbón, cuya presencia se anuncia antes de que pueda verse.",
+"Una noche, Camila y su hermano regresaban a casa cuando escucharon tres notas largas. El sonido parecía estar detrás de ellos. Camila recordó una regla de su abuelo: “Si el silbido parece lejano, no significa que el peligro esté lejos”.",
+"Los hermanos siguieron caminando sin correr. De pronto, el silbido sonó mucho más cerca. Camila miró hacia el camino, pero no vio a nadie. Entonces ambos escucharon el sonido de una rama romperse detrás de ellos y echaron a correr hacia las luces de su casa."
+],questions:[
+{tag:"Propósito del segundo párrafo",q:"¿Cuál es el propósito del segundo párrafo?",opts:["Explicar el origen histórico de la leyenda.","Introducir a los personajes y presentar una advertencia que aumenta la tensión.","Describir cómo se construyen las casas del pueblo.","Resolver el misterio del silbido."],ans:1,hint:"Busca qué información prepara al lector para lo que ocurre después.",why:"El párrafo presenta a Camila y su hermano, introduce el silbido y añade la advertencia del abuelo, lo que aumenta la tensión."},
+{tag:"Lenguaje figurado",q:"¿Qué efecto tiene la frase “el sonido parecía estar detrás de ellos” en el relato?",opts:["Ayuda a crear suspenso porque hace que el lector imagine que algo se acerca.","Explica exactamente dónde está escondido el espíritu.","Demuestra que Camila conoce el camino perfectamente.","Hace que la escena parezca divertida."],ans:0,hint:"Piensa en cómo el autor quiere que el lector se sienta.",why:"La frase coloca el sonido cerca de los personajes sin revelar qué lo produce. Esa incertidumbre crea suspenso."}
+]},
+{title:"La casa del cerro",icon:"🏚️",source:"Relato de misterio original",passage:[
+"En un pueblo rodeado de cerros había una casa abandonada. Los vecinos contaban que cada año, durante la primera tormenta de otoño, una luz aparecía en una ventana del segundo piso.",
+"Lucía decidió investigar desde el camino. No entró en la casa. Se quedó observando hasta que un relámpago iluminó el techo. En ese instante, vio una silueta detrás de la ventana y escuchó tres golpes.",
+"Lucía retrocedió. Cuando volvió a mirar, la ventana estaba completamente oscura. Al día siguiente descubrió que el dueño de la casa había colocado una vieja lámpara automática para recordar a su hermana, quien había vivido allí. La silueta, sin embargo, nunca pudo explicarse."
+],questions:[
+{tag:"Propósito del tercer párrafo",q:"¿Cuál es el propósito del tercer párrafo?",opts:["Resolver una parte del misterio y dejar otra parte sin explicación.","Demostrar que todos los vecinos estaban mintiendo.","Explicar por qué comenzó la tormenta.","Presentar a Lucía como una persona que no tiene miedo."],ans:0,hint:"Observa que el párrafo explica la lámpara, pero no la silueta.",why:"El párrafo explica el origen de la luz, pero deja la silueta sin una respuesta definitiva. Eso permite que el misterio continúe."},
+{tag:"Punto de vista",q:"¿Qué evidencia muestra que este relato está contado en tercera persona?",opts:["El narrador usa “Lucía” y “ella” para referirse al personaje.","Lucía habla directamente con el lector usando “tú”.","El narrador cuenta todo usando “yo”.","Los vecinos narran la historia en primera persona."],ans:0,hint:"Busca las palabras que usa el narrador para referirse a Lucía.",why:"El narrador se refiere a la protagonista por su nombre y desde fuera de la historia, lo que muestra un punto de vista en tercera persona."}
+]},
+{title:"La campana de medianoche",icon:"🔔",source:"Folktale original inspirado en tradición oral",passage:[
+"En un antiguo pueblo había una campana que solo sonaba cuando alguien olvidaba una promesa importante. Durante años nadie la escuchó. Una noche, justo a medianoche, la campana comenzó a sonar.",
+"El joven Mateo recordó que había prometido devolver a su vecino un libro muy antiguo. Había pensado hacerlo al día siguiente, pero la campana volvió a sonar. Mateo tomó el libro y caminó hasta la casa del vecino bajo la lluvia.",
+"Cuando entregó el libro, la campana dejó de sonar. El vecino sonrió y dijo que aquella campana no castigaba a nadie: simplemente recordaba lo que las personas querían olvidar. Mateo nunca volvió a dejar una promesa para después."
+],questions:[
+{tag:"Tema",q:"¿Qué tema se desarrolla principalmente en el folktale?",opts:["Las promesas importantes deben cumplirse aunque sea más fácil posponerlas.","Las campanas antiguas siempre tienen poderes mágicos.","Los vecinos deben prestar libros a los jóvenes.","Las tormentas ocurren cuando alguien rompe una promesa."],ans:0,hint:"Busca la lección que Mateo aprende al final.",why:"Mateo aprende que no debe posponer una promesa importante. Esa lección es el tema principal del relato."},
+{tag:"Propósito de una frase",q:"¿Cuál es el propósito de la frase “la campana no castigaba a nadie: simplemente recordaba lo que las personas querían olvidar”?",opts:["Explicar el significado de la campana y reforzar la lección del relato.","Demostrar que la campana estaba rota.","Presentar un nuevo personaje.","Explicar por qué comenzó la lluvia."],ans:0,hint:"Piensa en qué pregunta del misterio responde esa frase.",why:"La frase explica qué representa la campana. También conecta el elemento sobrenatural con la lección que Mateo aprende."}
+]},
+{title:"El libro de la biblioteca",icon:"📖",source:"Relato de misterio original",passage:[
+"De regreso en la biblioteca, Elena encontró un libro cubierto de polvo detrás de una fila de atlas. En la portada había un dibujo de una luna y una frase: “Las historias antiguas dejan huellas”. Al abrirlo, una hoja cayó al suelo.",
+"La hoja contenía los mismos nombres de las leyendas que Elena había leído esa noche: La Llorona, el Cadejo y El Silbón. Debajo aparecía una última instrucción: “No busques al monstruo. Busca la razón por la que la historia sobrevivió”.",
+"Elena comprendió que las historias no habían sido colocadas allí para asustarla. Cada una conservaba una advertencia, una explicación posible o una lección. Cuando cerró el libro, la campana de medianoche sonó una última vez y la puerta de la biblioteca se abrió sola."
+],questions:[
+{tag:"Propósito del tercer párrafo",q:"¿Cuál es el propósito del tercer párrafo?",opts:["Explicar lo que Elena aprende de las historias y cerrar el misterio.","Presentar una nueva leyenda sin relación con las anteriores.","Demostrar que Elena inventó todas las historias.","Describir cómo funciona la puerta de la biblioteca."],ans:0,hint:"Observa qué descubre Elena y qué sucede justo después.",why:"El tercer párrafo explica la comprensión de Elena: las historias tienen advertencias, explicaciones o lecciones. Luego la puerta se abre y el misterio termina."},
+{tag:"Idea clave",q:"¿Cuál es la idea clave de toda la sección final?",opts:["Las historias sobrenaturales pueden conservar advertencias y lecciones, no solo causar miedo.","Elena quiere convertirse en bibliotecaria.","La biblioteca está llena de libros sobre monstruos.","La campana es el objeto más importante de la biblioteca."],ans:0,hint:"Busca la idea que conecta las historias con la instrucción del libro.",why:"La sección final conecta las distintas leyendas y muestra que cada historia conserva un significado, como una advertencia o una lección."}
+]}
+];
+
+const answers = [2,2,1,2,2,1,1,1,1,1,1,1];
+const correctText = sections.flatMap(s=>s.questions.map(q=>q.opts[q.ans]));
+const state={student:"",xp:0,hints:0,answered:0,current:0,resolved:Array(12).fill(false),attempts:Array(12).fill(0),miniRunning:false,miniStars:0};
+let timer=2400,timerId=null,miniTimerId=null,miniEndTimeout=null;
+
+const $=id=>document.getElementById(id);
+function flatQuestions(){return sections.flatMap((s,si)=>s.questions.map((q,qi)=>({...q,si,qi})));}
+const allQ=flatQuestions();
+
+function rank(){if(state.xp>=1200)return"Maestro de las Leyendas";if(state.xp>=900)return"Guardián de la Biblioteca";if(state.xp>=600)return"Cazador de Sombras";if(state.xp>=300)return"Investigador de Misterios";return"Aprendiz de lo Sobrenatural";}
+function updateStats(){
+$("xp").textContent=state.xp;$("badges").textContent=state.answered;$("hintsUsed").textContent=state.hints;$("answered").textContent=state.answered;
+$("progressText").textContent=state.answered+"/12";$("progressBar").style.width=(state.answered/12*100)+"%";$("rank").textContent=rank();
+}
+function renderMap(){
+const map=$("map");map.innerHTML="";
+sections.forEach((s,i)=>{
+const first=i*2, done=state.resolved[first]&&state.resolved[first+1], unlocked=i===0||state.resolved[first-1];
+const b=document.createElement("button");b.type="button";b.className="room "+(done?"done ":"")+(i===Math.floor(state.current/2)?"current ":"")+(unlocked?"":"locked");
+b.innerHTML=`<span class="icon">${s.icon}</span><b>${s.title}</b><small>${done?"✓ Completada":unlocked?"Disponible":"🔒 Cerrada"}</small>`;
+b.addEventListener("click",()=>{if(unlocked) openQuestion(first);});
+map.appendChild(b);
+});
+}
+function openQuestion(i){
+if(i<0||i>=12)return;
+const q=allQ[i],s=sections[q.si];state.current=i;
+$("roomStatus").innerHTML=`<b>Sección ${q.si+1}: ${s.title}</b> • <span class="questionTag">${q.tag}</span><br><small>${s.source}</small>`;
+const c=$("challengeContainer");c.innerHTML="";
+const ch=document.createElement("div");ch.className="challenge active";
+ch.innerHTML=`<div class="passage">${s.passage.map(p=>`<p>${p}</p>`).join("")}</div>
+<div class="panel" style="margin:16px 0 0;background:#191b18;border-color:#4e5848">
+<div class="questionTag">Pregunta ${i+1} de 12</div><h2 style="font-size:23px;color:#f4df9e">${q.q}</h2>
+<div class="choices">${q.opts.map((o,j)=>`<button type="button" class="choice" data-choice="${j}">${String.fromCharCode(65+j)}. ${o}</button>`).join("")}</div>
+<div class="feedback" id="feedback"></div><div id="hintArea"></div></div>`;
+c.appendChild(ch);
+ch.querySelectorAll(".choice").forEach(btn=>btn.addEventListener("click",()=>answer(i,+btn.dataset.choice,btn)));
+renderMap();
+}
+function answer(i,choice,btn){
+if(state.resolved[i])return;
+const q=allQ[i],feedback=$("feedback"),hintArea=$("hintArea");
+state.attempts[i]++;
+if(choice===q.ans){
+state.resolved[i]=true;state.answered++;state.xp+=state.attempts[i]===1?100:70;btn.classList.add("correct");
+document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+feedback.innerHTML=`<span style="color:#a9d6a5">✓ ¡Correcto! Ganaste ${state.attempts[i]===1?100:70} XP.</span>`;
+updateStats();renderMap();startMini(i);return;
+}
+btn.classList.add("wrong");
+if(state.attempts[i]===1){
+feedback.innerHTML=`<span style="color:#f1aaa8">No todavía. Tienes <b>1 intento más</b>.</span>`;
+hintArea.innerHTML=`<button type="button" class="hintBtn" id="hintBtn">💡 VER PISTA</button><div id="hintBox"></div>`;
+$("hintBtn").addEventListener("click",()=>{if(!$("hintBox").innerHTML){state.hints++;updateStats();$("hintBox").innerHTML=`<div class="hint">💡 ${q.hint}</div>`;}});
+}else{
+state.resolved[i]=true;state.answered++;
+document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+feedback.innerHTML=`<div style="color:#f7e9bf"><b>🔎 RESPUESTA EXPLICADA</b><br>La respuesta correcta era <b>${String.fromCharCode(65+q.ans)}. ${q.opts[q.ans]}</b><br>${q.why}</div>`;
+updateStats();renderMap();
+setTimeout(()=>advance(i),1800);
+}
+}
+function advance(i){
+if(i<11){openQuestion(i+1);}
+else{$("vaultPanel").classList.remove("hidden");$("vaultPanel").scrollIntoView({behavior:"smooth"});}
+}
+function startMini(questionIndex){
+state.miniRunning=true;state.miniStars=0;$("stars").textContent="0";$("miniTime").textContent="10";$("miniMessage").textContent="¡Muévete y atrapa los faroles!";
+$("gameOverlay").classList.remove("hidden");$("miniGame").querySelectorAll(".star").forEach(x=>x.remove());
+$("player").style.left="45%";spawnLantern();spawnLantern();spawnLantern();
+let t=10;clearInterval(miniTimerId);clearTimeout(miniEndTimeout);
+miniTimerId=setInterval(()=>{t--;$("miniTime").textContent=t;if(t<=0)endMini(questionIndex,false);},1000);
+}
+function spawnLantern(){
+const el=document.createElement("div");el.className="star";el.textContent="🕯️";el.style.left=(10+Math.random()*80)+"%";el.style.top=(15+Math.random()*55)+"%";$("miniGame").appendChild(el);
+el.addEventListener("click",()=>collectLantern(el));
+}
+function collectLantern(el){
+if(!state.miniRunning)return;el.remove();state.miniStars++;$("stars").textContent=state.miniStars;
+if(state.miniStars>=3){state.xp+=25;updateStats();$("miniMessage").textContent="✨ ¡Encontraste los 3 faroles! +25 XP";endMini(state.current,true);}
+}
+function move(dir){if(!state.miniRunning)return;let p=$("player"),left=parseFloat(p.style.left)||45;left=Math.max(2,Math.min(90,left+dir*7));p.style.left=left+"%";checkCollisions();}
+function checkCollisions(){const p=$("player").getBoundingClientRect();document.querySelectorAll(".star").forEach(el=>{const r=el.getBoundingClientRect();if(!(p.right<r.left||p.left>r.right||p.bottom<r.top||p.top>r.bottom))collectLantern(el);});}
+function endMini(i,won){if(!state.miniRunning)return;state.miniRunning=false;clearInterval(miniTimerId);clearTimeout(miniEndTimeout);if(!won)$("miniMessage").textContent="⏳ Se acabó el tiempo. ¡La investigación continúa!";
+miniEndTimeout=setTimeout(()=>{$("gameOverlay").classList.add("hidden");advance(i);},700);}
+$("leftBtn").addEventListener("click",()=>move(-1));$("rightBtn").addEventListener("click",()=>move(1));
+document.addEventListener("keydown",e=>{if(state.miniRunning){if(e.key==="ArrowLeft")move(-1);if(e.key==="ArrowRight")move(1);}});
+function startTimer(){clearInterval(timerId);timer=2400;$("timer").textContent="40:00";timerId=setInterval(()=>{timer--;let m=Math.floor(timer/60),s=timer%60;$("timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");if(timer<=0){clearInterval(timerId);$("timer").textContent="00:00";$("roomStatus").innerHTML="<b>⏰ Se acabó el tiempo.</b>";}},1000);}
+$("startBtn").addEventListener("click",()=>{state.student=$("studentName").value.trim()||"Detective";$("studentLabel").textContent="🕵️ "+state.student;$("startScreen").classList.add("hidden");$("game").classList.remove("hidden");startTimer();updateStats();openQuestion(0);});
+$("vaultBtn").addEventListener("click",()=>{const val=$("vaultCode").value.trim();const fb=$("vaultFeedback");if(val==="122121111111"){fb.innerHTML="<span style='color:#a9d6a5'>🔓 ¡La caja fuerte se abrió! ¡Has resuelto el misterio!</span>";$("finalPanel").classList.remove("hidden");$("finalRank").textContent=rank();$("finalText").textContent=`${state.student}, terminaste con ${state.xp} XP y ${state.hints} pistas usadas. ¡Las leyendas no pudieron detenerte!`;clearInterval(timerId);$("finalPanel").scrollIntoView({behavior:"smooth"});}else fb.innerHTML="<span style='color:#f1aaa8'>El código no abre la caja. Revisa tus 12 cifras en orden.</span>";});
+$("restartBtn").addEventListener("click",()=>location.reload());
+})();
+</script>
+</main>
+</body>
+</html>
