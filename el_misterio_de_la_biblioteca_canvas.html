@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>El Misterio de la Biblioteca — Escape Room</title>
+<style>
+:root{--ink:#25352a;--green:#476c4e;--sage:#dfeadd;--cream:#fbf7ea;--gold:#a88442;--red:#b85d5d;--blue:#54778a}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:#000;background:radial-gradient(circle at top,#f8fbf5,#e4eee1 70%);min-height:100vh}
+.wrap{max-width:1080px;margin:auto;padding:18px}.card{background:#fff;border:1px solid #d9e3d5;border-radius:24px;padding:28px;margin:16px 0;box-shadow:0 12px 35px #233a2415}
+h1{font-size:clamp(32px,5vw,52px);margin:8px 0}h2{font-size:30px;margin:10px 0}.sub{font-size:19px;line-height:1.55;color:#58705d}
+.badge{display:inline-block;background:var(--sage);padding:8px 13px;border-radius:999px;font-weight:800;font-size:13px;letter-spacing:.3px}
+button{border:0;border-radius:12px;padding:13px 19px;font-size:16px;font-weight:800;background:var(--green);color:white;cursor:pointer;box-shadow:0 3px 0 #315238;margin-top:10px}
+button:active{transform:translateY(2px);box-shadow:none}button:disabled{opacity:.55;cursor:not-allowed}
+input{padding:13px;border:2px solid #cad7c6;border-radius:10px;font-size:18px}.name{width:100%;text-align:left}
+.hidden{display:none!important}.story{font-size:18px;line-height:1.72;background:var(--cream);padding:22px;border-left:6px solid var(--gold);border-radius:15px}
+.note{background:#edf5ea;padding:15px;border-radius:13px;line-height:1.55}.small{font-size:13px;color:#68756a}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.timer{font-size:24px;font-weight:900;background:#f3e8d0;padding:10px 15px;border-radius:12px}
+.progress{height:12px;background:#dce6da;border-radius:99px;overflow:hidden;margin-top:14px}.bar{height:100%;width:0;background:var(--green);transition:.4s}
+.map{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.room{min-height:125px;border:2px solid #d6e2d2;border-radius:18px;background:#f7faf5;padding:15px;text-align:left;cursor:pointer;transition:.2s}.room:hover{transform:translateY(-3px);background:#edf5ea}.room.locked{opacity:.55;cursor:not-allowed}.room.done{background:#e1f0df;border-color:#76a47b}.room .icon{font-size:35px}.room b{display:block;margin-top:7px}
+.challenge{animation:appear .35s ease}@keyframes appear{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.choice{display:block;width:100%;text-align:left;background:#f4f8f2;color:var(--ink);border:2px solid #d7e1d4;box-shadow:none;margin:10px 0}.choice:hover{background:#e8f1e6}.choice.correct{background:#d9eed9;border-color:#5e9865}.choice.wrong{background:#f7dddd;border-color:#bc6969}
+.feedback{min-height:27px;font-weight:800;margin-top:10px;color:#000}.hint{margin-top:10px;padding:12px 14px;background:#fff7d8;border:2px solid #d3b65c;border-radius:12px;color:#000;font-weight:700}.lock{background:#f7f1df;border-left:6px solid var(--gold);padding:18px;border-radius:14px;margin-top:20px}
+.lock input{width:150px;text-align:center}.keypad{display:grid;grid-template-columns:repeat(3,55px);gap:7px;margin-top:10px}.keypad button{margin:0;padding:12px;background:#667d68}
+.vault{border:7px solid #777;border-radius:22px;background:linear-gradient(#555,#242424);padding:25px;color:#fff;text-align:center;box-shadow:inset 0 0 0 4px #aaa}
+.vault input{font-size:28px;letter-spacing:10px;text-align:center;width:230px}.success{background:linear-gradient(135deg,#e0f1dc,#fff3cf);text-align:center}
+.confetti{font-size:55px}.teacher{background:#f7f8f6}.teks{line-height:1.55}.teks li{margin:7px 0}
+@media(max-width:700px){.map{grid-template-columns:repeat(2,1fr)}.card{padding:20px}.story{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<section class="card" id="start">
+<span class="badge">5.º GRADO • SPANISH LANGUAGE ARTS & READING</span>
+<h1>🔐 El Misterio de la Biblioteca</h1>
+<p class="sub">Una misión de lectura de aproximadamente <b>40 minutos</b>. Explora las salas, encuentra pistas y demuestra que puedes leer como un detective.</p>
+<div class="story"><b>LA HISTORIA:</b> Al terminar las clases, la bibliotecaria descubre que el <b>Libro de los Secretos</b> ha desaparecido. La puerta principal se cerró automáticamente. Antes de irse, dejó un mapa y una nota: <i>“El libro no está perdido. Está esperando al lector que sepa encontrar y usar la evidencia.”</i></div>
+<div class="note"><b>🎯 Tu misión:</b> completa 8 desafíos de lectura, reúne los números de las pistas y abre la caja fuerte final. <br><br><b>⏱️ Tiempo recomendado:</b> 40 minutos.</div>
+<p><b>Nombre del detective:</b></p><input class="name" id="name" placeholder="Escribe tu nombre">
+<br><button onclick="begin()">🚪 Entrar a la biblioteca</button>
+</section>
+
+<div id="game" class="hidden">
+<section class="card">
+<div class="top"><div><b id="student"></b><div class="small">Usa el mapa para moverte entre las salas.</div></div><div class="timer" id="timer">40:00</div></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<p id="status"><b>0 de 8 desafíos completados</b> • ⭐ XP: <span id="xp">0</span> • 🏅 Rango: Aprendiz Detective</p>
+<div class="map" id="map"></div>
+</section>
+
+<div id="rooms"></div>
+
+<section class="card hidden" id="vaultCard">
+<span class="badge">🔒 SALA FINAL</span><h2>La caja fuerte</h2>
+<p>Has reunido las ocho pistas. Introduce el código final en el orden de los desafíos.</p>
+<div class="vault">
+<div style="font-size:45px">🔐</div>
+<input id="vaultInput" maxlength="8" inputmode="numeric" placeholder="••••••••">
+<br><button onclick="openVault()">ABRIR LA CAJA</button>
+<p id="vaultFeedback"></p>
+</div>
+</section>
+
+<section class="card success hidden" id="finish">
+<div class="confetti">🎉📚🔓🎉</div>
+<h1>¡ESCAPASTE!</h1>
+<h2>El misterio ha sido resuelto.</h2>
+<p id="finishText"></p>
+<div class="story"><b>Mensaje de la bibliotecaria:</b><br>“Un lector atento no adivina. Busca evidencia, conecta ideas y explica cómo sabe lo que sabe.”</div>
+<button onclick="location.reload()">🔄 Jugar otra vez</button>
+</section>
+
+<section class="card teacher">
+<details><summary><b>👩‍🏫 Panel de la maestra — TEKS y respuestas</b></summary>
+<div class="teks">
+<p><b>Propósito:</b> práctica de lectura en español de 5.º grado, diseñada para aproximadamente 40 minutos.</p>
+<ul>
+<li><b>Desafío 1:</b> Inferencias + evidencia textual.</li>
+<li><b>Desafío 2:</b> Idea central + detalles relevantes.</li>
+<li><b>Desafío 3:</b> Vocabulario en contexto.</li>
+<li><b>Desafío 4:</b> Punto de vista.</li>
+<li><b>Desafío 5:</b> Elementos de la trama y clímax.</li>
+<li><b>Desafío 6:</b> Propósito del autor + estructura/secuencia.</li>
+<li><b>Desafío 7:</b> Resumen manteniendo ideas principales y orden lógico.</li>
+<li><b>Desafío 8:</b> Tema + evidencia textual.</li>
+</ul>
+<p><b>Códigos:</b> 2 • 2 • 3 • 1 • 2 • 1 • 2 • 2 → <b>22312122</b></p>
+<p class="small">La actividad está diseñada como práctica alineada con las TEKS de Spanish Language Arts and Reading de Grade 5. Verifica los códigos TEKS específicos que tu campus está priorizando para la unidad antes de usarla como evaluación formal.</p>
+</div></details>
+</section>
+</div>
+
+<script>
+const data=[
+{title:"La lámpara encendida",icon:"🔎",skill:"Inferencia + evidencia",text:"Sofía entró a la biblioteca y notó que casi todas las luces estaban apagadas. Sin embargo, una lámpara seguía encendida junto a la ventana. Sobre la mesa había un libro abierto y una nota que decía: “Busca donde entra la luz”. Sofía miró hacia la ventana, pero no encontró nada. Entonces observó el libro y descubrió que una de sus páginas estaba doblada.",q:"¿Qué puede inferir mejor el lector?",opts:["Sofía olvidó apagar las luces.","La página doblada probablemente contiene una pista.","La biblioteca está cerrada todos los días.","Sofía quiere comprar una lámpara."],ans:1},
+{title:"La biblioteca cambia",icon:"📚",skill:"Idea central",text:"Las bibliotecas modernas ofrecen mucho más que libros. Muchas tienen computadoras, espacios para estudiar y programas que ayudan a los estudiantes a investigar. Algunas incluso prestan herramientas, instrumentos musicales o materiales para proyectos. Estos servicios permiten que las bibliotecas respondan a las necesidades de diferentes personas de la comunidad.",q:"¿Cuál es la idea central del texto?",opts:["Las bibliotecas solamente sirven para leer.","Las bibliotecas ofrecen diversos recursos y servicios a la comunidad.","Los estudiantes deben usar computadoras.","Las bibliotecas prestan solamente instrumentos."],ans:1},
+{title:"Una palabra clave",icon:"🗝️",skill:"Vocabulario en contexto",text:"El pasillo estaba <b>desierto</b>. No se escuchaban voces ni pasos; solamente se oía el tic-tac del reloj. Sofía caminó lentamente hasta la puerta del archivo.",q:"¿Qué significa “desierto” en este contexto?",opts:["Lleno de plantas.","Muy ruidoso.","Sin personas.","Muy iluminado."],ans:2},
+{title:"¿Quién cuenta?",icon:"👁️",skill:"Punto de vista",text:"“Tomé la llave con cuidado. No sabía qué encontraría detrás de la puerta, pero necesitaba descubrir quién había dejado la nota. Respiré profundamente y giré la manija”.",q:"¿Desde qué punto de vista está narrado el texto?",opts:["Primera persona","Segunda persona","Tercera persona limitada","Tercera persona omnisciente"],ans:0},
+{title:"La montaña",icon:"⛰️",skill:"Elementos de la trama",text:"Sofía descubrió tres pistas: la página doblada, una llave y una marca en el piso. Cada pista la llevó más cerca del archivo. Cuando llegó, encontró una puerta cerrada y escuchó un ruido detrás de ella. Sofía tuvo que decidir si usar la llave. Finalmente, abrió la puerta y descubrió una caja con el libro perdido.",q:"¿Qué parte de la trama representa mejor el momento en que Sofía decide usar la llave frente a la puerta cerrada?",opts:["Exposición","Clímax","Resolución","Finalización de la historia antes del conflicto"],ans:1},
+{title:"El texto escondido",icon:"📰",skill:"Propósito + estructura",text:"Durante años, muchas escuelas han creado pequeños jardines. Primero, los estudiantes investigan qué plantas crecen mejor en su región. Después, preparan la tierra y siembran las semillas. Finalmente, observan las plantas y registran sus cambios. Estos jardines pueden convertirse en espacios donde los estudiantes aprenden ciencias mientras cuidan su escuela.",q:"¿Por qué el autor organiza principalmente las ideas en este orden?",opts:["Para explicar una secuencia de pasos para crear y usar un jardín escolar.","Para convencer al lector de que todas las escuelas deben tener jardines.","Para contar una historia sobre un estudiante específico.","Para comparar dos tipos de plantas."],ans:0},
+{title:"La nota final",icon:"🧩",skill:"Resumen",text:"Sofía encontró finalmente el libro detrás de una fila de atlas. Dentro había una última nota: “No encontraste el libro por suerte. Observaste detalles que otros habrían ignorado”. Sofía recordó la lámpara, la página doblada, la llave y las marcas del piso. Comprendió que había usado todas las pistas para resolver el misterio.",q:"¿Cuál es el mejor resumen?",opts:["Sofía encontró un libro detrás de unos atlas.","Sofía siguió varias pistas, prestó atención a los detalles y usó la evidencia para encontrar el libro perdido.","Una lámpara estaba encendida y había una llave en la biblioteca.","Sofía leyó una nota y después se fue de la biblioteca."],ans:1},
+{title:"El mensaje del misterio",icon:"🏆",skill:"Tema + evidencia",text:"Sofía sonrió al cerrar la caja. Al principio había pensado que necesitaría suerte para encontrar el libro. Sin embargo, cada vez que observó una pista, pudo avanzar. La experiencia le enseñó que los problemas difíciles pueden resolverse cuando se presta atención, se hacen preguntas y se usa la evidencia disponible.",q:"¿Qué tema se comunica mejor?",opts:["La suerte es la mejor manera de resolver problemas.","Prestar atención, hacer preguntas y usar evidencia puede ayudarnos a resolver problemas.","Los libros siempre están escondidos en cajas.","Hacer preguntas hace que los problemas sean más difíciles."],ans:1}
+];
+let completed=Array(8).fill(false),time=2400,timerInt=null,xp=0;
+function begin(){
+ const n=document.getElementById("name").value.trim()||"Detective";
+ document.getElementById("student").textContent="🕵️ "+n;
+ document.getElementById("start").classList.add("hidden");document.getElementById("game").classList.remove("hidden");
+ build();timerInt=setInterval(tick,1000);
+}
+function build(){
+ const map=document.getElementById("map"),rooms=document.getElementById("rooms");
+ data.forEach((d,i)=>{
+  const r=document.createElement("button");r.className="room locked";r.id="room"+i;
+  r.innerHTML=`<span class="icon">${d.icon}</span><b>${i+1}. ${d.title}</b><span class="small">${d.skill}</span>`;
+  r.onclick=()=>openRoom(i);map.appendChild(r);
+  const s=document.createElement("section");s.className="card challenge hidden";s.id="challenge"+i;
+  s.innerHTML=`<span class="badge">DESAFÍO ${i+1} • ${d.skill.toUpperCase()}</span><h2>${d.icon} ${d.title}</h2><div class="story">${d.text}</div><p><b>${d.q}</b></p>`;
+  d.opts.forEach((o,j)=>{const b=document.createElement("button");b.className="choice";b.textContent=String.fromCharCode(65+j)+". "+o;b.onclick=()=>choose(i,j,b);s.appendChild(b)});
+  s.innerHTML+=`<div class="feedback" id="fb${i}"></div><div class="lock hidden" id="lock${i}"><b>🔐 Pista:</b> escribe el número de la opción correcta.<br><input id="code${i}" maxlength="1" inputmode="numeric" placeholder="1–4"> <button onclick="unlock(${i})">Desbloquear</button></div>`;
+  rooms.appendChild(s);
+ });
+ document.getElementById("room0").classList.remove("locked");
+ update();
+}
+function openRoom(i){
+ if(!completed[i] && (i===0 || completed[i-1])){
+  document.querySelectorAll(".challenge").forEach(x=>x.classList.add("hidden"));
+  document.getElementById("challenge"+i).classList.remove("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
+ } else if(completed[i]) {
+  document.querySelectorAll(".challenge").forEach(x=>x.classList.add("hidden"));
+  document.getElementById("challenge"+i).classList.remove("hidden");
+ }
+}
+function choose(i,j,b){
+ const fb=document.getElementById("fb"+i);
+ const sec=document.getElementById("challenge"+i);
+ let hint=sec.querySelector(".hint");
+ if(j===data[i].ans){
+  b.classList.add("correct");
+  fb.textContent="✅ ¡Correcto! +100 XP • ¡La evidencia respalda tu respuesta!";
+  document.querySelectorAll("#challenge"+i+" .choice").forEach(x=>x.disabled=true);
+  document.getElementById("lock"+i).classList.remove("hidden");
+ } else {
+  b.classList.add("wrong");
+  let hints=[
+   "💡 Pista: Busca una frase del texto que explique por qué la respuesta tiene sentido.",
+   "💡 Pista 2: Elimina las opciones que agregan información que el texto nunca menciona.",
+   "💡 Última pista: Vuelve a leer la pregunta y busca la evidencia más directa."
+  ];
+  let used=sec.dataset.wrong?parseInt(sec.dataset.wrong):0; used=Math.min(used+1,3); sec.dataset.wrong=used;
+  if(!hint){hint=document.createElement("div");hint.className="hint";fb.parentNode.insertBefore(hint,fb.nextSibling);}
+  hint.textContent=hints[used-1];
+  fb.textContent="❌ No todavía. ¡Usa la pista y vuelve a intentarlo!";
+  setTimeout(()=>b.classList.remove("wrong"),700);
+ }
+}
+function unlock(i){
+ const v=document.getElementById("code"+i).value.trim();
+ if(v!==String(data[i].ans+1)){alert("🔒 Código incorrecto. Revisa qué opción elegiste.");return}
+ completed[i]=true;document.getElementById("room"+i).classList.add("done");document.getElementById("room"+i).classList.remove("locked");
+ if(i<7)document.getElementById("room"+(i+1)).classList.remove("locked");
+ document.getElementById("challenge"+i).classList.add("hidden");
+ update();
+ if(i===7){document.getElementById("vaultCard").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"})}
+ else openRoom(i+1);
+}
+function update(){
+ const n=completed.filter(Boolean).length;const rank=n>=8?"Maestro Detective":n>=6?"Detective Experto":n>=3?"Detective en Entrenamiento":"Aprendiz Detective"; document.getElementById("status").innerHTML=`<b>${n} de 8 desafíos completados</b> • ⭐ XP: <span id="xp">${xp}</span> • 🏅 Rango: ${rank}`;document.getElementById("bar").style.width=(n/8*100)+"%";
+}
+function tick(){
+ time--;if(time<0)time=0;const m=Math.floor(time/60),s=time%60;
+ document.getElementById("timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+ if(time===0){clearInterval(timerInt);alert("⏰ Se acabó el tiempo recomendado. Puedes continuar si tu maestra lo permite.")}
+}
+function openVault(){
+ const code=document.getElementById("vaultInput").value.trim(),fb=document.getElementById("vaultFeedback");
+ if(code==="22312122"){
+  clearInterval(timerInt);document.getElementById("vaultCard").classList.add("hidden");document.getElementById("finish").classList.remove("hidden");
+  const used=2400-time,m=Math.floor(used/60),s=used%60;document.getElementById("finishText").textContent=`Completaste los 8 desafíos en ${m} minutos y ${String(s).padStart(2,"0")} segundos. ¡Trabajo de detective!`;
+  window.scrollTo({top:0,behavior:"smooth"});
+ }else{fb.textContent="❌ La caja no se abre. Revisa el orden de las ocho pistas.";fb.style.color="#b85d5d"}
+}
+</script>
+</body>
+</html>
